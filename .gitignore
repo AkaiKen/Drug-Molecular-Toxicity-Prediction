@@ -1,0 +1,11 @@
+*.h5
+*.csv
+*.npy
+*.pyc
+*.aux
+*.gz
+*.out
+*.log
+*.pdf
+*.data-00000-of-00001
+
