@@ -43,7 +43,7 @@ MATSUNAGA TAKEHIRO \\
 518030990028\\
 Department of Computer Science\\
 Shanghai Jiao Tong University\\
- \texttt{matsunagatakehiro@sjtu.edu.cn} \\
+\texttt{matsunagatakehiro@sjtu.edu.cn} \\
 }
 
 
@@ -52,40 +52,49 @@ Shanghai Jiao Tong University\\
 \maketitle
 
 \begin{abstract}
-  The authors develop some models to solve a problem whether a chemical is toxic or not. In this project I use residual net(ResNet), long short-term memory(LSTM) and a complex CNN based on LeNet-5. Through several experiment I found that the complex neural network is most accurate among these model.
+ I develop some models to solve a problem whether a chemical is toxic or not. In this project I use residual net(ResNet), long short-term memory(LSTM) and a complex CNN based on LeNet-5. Through several experiment I found that the complex neural network is most accurate among these model.
 \end{abstract}
 
 \section{Introduction}
-This project is the group project of CS410 Artificial Intelligence 2020 Fall in Shanghai Jiao Tong University named Multi-label Classification on YouTube-8M. The main purpose is to use a neural network model taking two video-level features(mean\_rgb and mean\_audio) as input, to output the prediction of labels of videos from the YouTube-8M dataset. The authors develop two different neural network models, which are Deep Fully Connected Neural Networks with Merge-and-Run Mappings(DMRNets) and LSTM in their attempts to achieve this goal.
+This project is the group project of CS410 Artificial Intelligence 2020 Fall in Shanghai Jiao Tong University named Drug Molecular Toxicity Prediction. The main purpose is to use a neural network model taking chemical structure as input, to output the prediction of whether it is toxic. In this project I use one hot format of SMILE structure which is processed from original chemical structure. The one hot format of SMILES is a 2D {0,1} matrix, where each column represents a symbol in the SMILES notation of the current molecule, and each row is one ASCII character appeared in the dataset’s SMILES dictionary.
+% The authors develop two different neural network models, which are Deep Fully Connected Neural Networks with Merge-and-Run Mappings(DMRNets) and LSTM in their attempts to achieve this goal.
+
+\section{Evironment}
+In this project, TensorFlow-gpu 1.15.0 is used as deep learning library, Pandas is used to input data and Numpy is used through mathmatical calculation.
 
 \section{Methods}
-\subsection{Deep Fully Connected Neural Networks with Merge-and-Run Mappings(DMRNets)}
-\subsubsection{Model Overview}
-One of the neural network architecture we consider is the deep fully connected neural networks with merge-and-run mappings, this is actually a variation of the deep convolutional neural networks with merge-and-run mappings, which coincidentally has the same short-form as DMRNets, to differentiate these two architectures, we would use DMRNets(FCN) as the short-form of Deep fully connected neural networks with Merge-and-Run Mappings and DMRNets(CNN) as the short-form of Deep convolutional neural networks with Merge-and-Run Mappings. DMRNets(CNN) itself is a variation of the residual neural network (ResNet). 
+\subsection{Complex Convolutional Neural Networks}
+Based on LeNet-5 which is given in the demo, I optimize that model by using batch normalization, droupout and so on. 
 
-ResNet originated from Deep Convolutional Neural Networks(CNN), researchers have been pondering at the question of, does stacking more convolutional layers (which is increasing the depth) leads to better performance? They found out that stacking layers leads to a degradation problem, as they increase the depth, accuracy get saturated then degrades rapidly, and this is not caused by overfitting, the more layers they stack, the higher the training error. Some proposed a solution which is residual mapping, the basic building block of residual mapping is shown in Figure 1. Denote the desired underlying mapping as $H(x) = F(x) + x$, instead of directly fitting to $H(x)$, fit the layer to $F(x)$, and fit another layer to the identity mapping which is $x$, at the end merge the two layers to get the desired mapping $H(x)$. The authors of the article argued and proved that this modification significantly reduced the degradation problem while increasing the depth of the model, for more information please refer to the original article[1].
+\subsubsection{LeNet-5}
+LeNet-5 is a simple but usefull CNN which is widely used in image processing. The original LeNet-5 consists of seven layers: 2 convolution layer, 2 pooling layer and 3 full connection layer. The input data will first processed by Layer 1 convolution, that has 5$\times$5 kernel. Through the convolution it will increase the data channel. The pooling is use to reduce its size, and outstand feature value in pooling kernel. When the size is small enough--in LeNet-5 run the function after 2 convolution and pooling-- model run the full connection and shrink node to label size by using 3 layers. The Figure 1 show the structure of LeNet-5.
+\begin{figure}[h]
+  \centering
+  \fbox{\includegraphics[width=14cm, height=4cm]{LeNet-5.png}}
+  \caption{Structure of LeNet-5}
+\end{figure} 
 
-
-
-Next, we move on to the variation based on ResNet, the DMRNets(CNN). The idea behind this architecture is to assemble the residual branches in parallel through a merge-and run mapping. Merge means to average the inputs of these residual branches, and by Run it means to add the average to the output of each residual branch as the input of the subsequent residual branch.
-To further illustrate the model, please refer to Figure 2. Figure 2(a) shows 2 residual branches assembled sequentially, Figure 2(b) shows 2 residual branches assembled in parallel and with identity mappings, and finally Figure 2(c) shows 2 residual branches assembled in parallel and with the proposed merge-and-run mappings. The authors of the article argued and proved that this modification further reduced the training difficulty of ResNet and retained the advantages of ResNet, for more information please refer to the original article[2].
-
-
-In this project, we adopt and do some variations on the DMRNets(CNN) by using the fully connected layers instead of convolutional layers as the basic layers to form the DMRNets(FCN). Part of the model structure is shown in Figure $3$. First we define a fc\_block which consists of dense layer, batch normalization layer, leaky ReLU layer, and dropout layer. Then we define the merge-and-run function, which separate input into 2 branches, branch a pass through the fc\_block while branch b pass through identity mapping, which is essentially mapping to itself, then we pass both branches into an average layer, then the output passes through another leaky ReLU layer. In Figure 3, we can see both input first go through a fc\_block, then into a merge-and-run mappings. The model is actually so deep that the rest of the structure is too large to be shown in the report, but it’s essentially the same process, repeatedly pass through fc\_block and merge-and-run mappings and finally merged into a single output, and the full picture is included in the submission folder.
-
+\subsubsection{Complex CNN}
+The size of input data of one hot format is (?, 73, 398), which means each size of one chemical matrix is 73$\times$398. 
 
 
 \subsubsection{Performance}
 Small datasets MAP@10: 
 Whole datasets MAP@10: 
 
-\subsection{Long short-term memory (LSTM)}
+\subsection{CNN + LSTM}
 \subsubsection{Model Overview}
 Long short-term memory(LSTM) is a type of recurrent neural network (RNN) architecture,which is one of the most useful RNN.  Before LSTM, let's first talk about RNN, the structure of a typical RNN is shown in Figure x. As brain can understand articles based on knowledge that people have learnt before, some parameters in RNN can be derived from forward node, this was what traditional neural networks could not achieve. Traditional RNN could not store what it learned from forward node for a dragged time period, since every cell of RNN will process both input and derived information in activation function, but LSTM solved this problem.
 
 
-A common LSTM unit is composed of a cell and 3 gates. The cell stores values over time intervals as cell states, and the 3 gates’ main job is to regulate the flow of information into and out of the cell. Specifically, forget gate decides which information to forget, input gate decides to update which value of cell states and update cell states, and at last, the output gate output filtered cell states. To put it in an abstract high-level view, what LSTM do is using past context as reference to predict the output, for more information please refer to the original article[3]. The model structure is shown in Figure 4.
-Beside forward outputs, another data are derived from forward nodes in LSTM network. The increasing data will only interact with a few data that processed in cell, which means it will keep the knowledge that it learned for a long time.
+A common LSTM unit is composed of a cell and 3 gates. The cell stores values over time intervals as cell states, and the 3 gates’ main job is to regulate the flow of information into and out of the cell. Specifically, forget gate decides which information to forget, input gate decides to update which value of cell states and update cell states, and at last, the output gate output filtered cell states. To put it in an abstract high-level view, what LSTM do is using past context as reference to predict the output.Beside forward outputs, another data are derived from forward nodes in LSTM network. The increasing data will only interact with a few data that processed in cell, which means it will keep the knowledge that it learned for a long time.
+
+\begin{figure}[h]
+  \centering
+  \fbox{\includegraphics[width=14cm, height=9cm]{lstm.png}}
+  \caption{Structure of LSTM Cell}
+\end{figure} 
+
 
 Here are each step in the forget gate of LSTM cell:
 \begin{itemize}
@@ -95,6 +104,11 @@ Here are each step in the forget gate of LSTM cell:
 \item step4: $C_t = f_t*C_{t-1} + i_t*\widetilde{C}$
 \item step5: $h_t=o_t*tanh(C_t)$
 \end{itemize}
+
+\subsubsection{Contribute idea}
+The reason why I use CNN first is that the input size is too huge for my computer to caluculate directly. So CNN and pooling is necessary for reduce the size. When passing the CNN layer, the size of each piece of data is $18*50*32$. So I can run the processed input on LSTM, which can keep some forward information.
+
+
 
 \subsubsection{Performance}
 Small datasets MAP@10: 
@@ -141,25 +155,7 @@ The performances of 3 models are listed in Table \ref{table 1}, as we could see,
 
 \section{Conclusion}
 Based on the experiments, we conclude that the xxx model has a superior performance over the other models we used.
-\section{Contributions}
-\begin{itemize}
-\item KAR CHUN TEONG: 
-\begin{itemize}
-\item Production management(organization and distribution of workload, arrangement of meeting schedule, etc.)
-\item Analysis and implementation of DMRNets model
-\item Design and compilation of final report and PPT
-\end{itemize}
-\item MATSUNAGA TAKEHIRO
-\begin{itemize}
-\item Analysis and implementation of LSTM model
-\item Training and testing of LSTM model
-\end{itemize}
-\item EDUARDO WANG ZHENG
-\begin{itemize}
-\item Implementation of DMRNets model
-\item Training and testing of DMRNets model
-\end{itemize}
-\end{itemize}
+
 
 \section*{References}
 
