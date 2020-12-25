@@ -62,9 +62,16 @@ This project is the group project of CS410 Artificial Intelligence 2020 Fall in 
 \section{Evironment}
 In this project, TensorFlow-gpu 1.15.0 is used as deep learning library, Pandas is used to input data and Numpy is used through mathmatical calculation.
 
+The platform I train and test the model is on my own local machine, whose CPU is i5-8500, GPU is GTX 1060-16G, and RAM size is 24G.
+
 \section{Methods}
+\subsection{Input Data analysis}
+First, I analyzed the input data in this project.Through the interface that demo provide me, I could directly get the processed input in the model. By calling the print function to print input shape to screen, I found that input shpae is (?, 73, 398), which means each size of chemical is 73$\times$398. 
+
 \subsection{Complex Convolutional Neural Networks}
 Based on LeNet-5 which is given in the demo, I optimize that model by using batch normalization, droupout and so on. 
+\subsubsection{CNN}
+convolutional neural network (CNNt) is a class of neural networks, most commonly applied to analyzing image. CNN has feature kernel that to determine whether each part of the image with the kernel size has the feature, if it is, it may return a higher value. When running the CNN, the input tensor with shape $number*height*width*input channel$ will be processed into $number*height*width*feature channel$ if user fill some blank and keep image size same.
 
 \subsubsection{LeNet-5}
 LeNet-5 is a simple but usefull CNN which is widely used in image processing. The original LeNet-5 consists of seven layers: 2 convolution layer, 2 pooling layer and 3 full connection layer. The input data will first processed by Layer 1 convolution, that has 5$\times$5 kernel. Through the convolution it will increase the data channel. The pooling is use to reduce its size, and outstand feature value in pooling kernel. When the size is small enough--in LeNet-5 run the function after 2 convolution and pooling-- model run the full connection and shrink node to label size by using 3 layers. The Figure 1 show the structure of LeNet-5.
@@ -75,12 +82,17 @@ LeNet-5 is a simple but usefull CNN which is widely used in image processing. Th
 \end{figure} 
 
 \subsubsection{Complex CNN}
-The size of input data of one hot format is (?, 73, 398), which means each size of one chemical matrix is 73$\times$398. 
+I first think that whether I can build an improved model based on the demo, which is LeNet-5 inside. So I try to add some layers to test whether the GAP can increase.
 
+Though my effort I get a bit powerful model than vanilla LeNet-5, which is add batch normalization after each convolution and dense layer, so that the regularization can work on the processed data. After each pooling, I use dropout to make some noise in order to enhance the model. 
+ 
 
-\subsubsection{Performance}
-Small datasets MAP@10: 
-Whole datasets MAP@10: 
+\begin{figure}[h]
+	\centering
+	\fbox{\includegraphics[width=14cm, height=11cm]{complex-cnn.png}}
+	\caption{Structure of complex-cnn}
+\end{figure} 
+
 
 \subsection{CNN + LSTM}
 \subsubsection{Model Overview}
@@ -108,11 +120,11 @@ Here are each step in the forget gate of LSTM cell:
 \subsubsection{Contribute idea}
 The reason why I use CNN first is that the input size is too huge for my computer to caluculate directly. So CNN and pooling is necessary for reduce the size. When passing the CNN layer, the size of each piece of data is $18*50*32$. So I can run the processed input on LSTM, which can keep some forward information.
 
-
-
-\subsubsection{Performance}
-Small datasets MAP@10: 
-Whole datasets MAP@10: 
+\begin{figure}[h]
+	\centering
+	\fbox{\includegraphics[width=6cm, height=14cm]{CNN+LSTM.png}}
+	\caption{Structure of CNN+LSTM}
+\end{figure} 
 
 \subsection{Bidirectional Long short-term memory (biLSTM)}
 \subsubsection{Model Overview}
@@ -123,9 +135,6 @@ In our project, we train two features in each biLSTM, then merge them together. 
 
 The model first extend mean\_RGB features to 1024. Processing the data by using batch normalization and reshape in order to run bidirectional LSTM. Then model use dropout to make some noise. The process of the other feature is as same as RGB feature. When two features have done biLSTM, model concatenate them and full connect them using leaky relu. 
 
-\subsubsection{Performance}
-Small datasets MAP@10: 
-Whole datasets MAP@10: 
 
 
 \section{Experiments and Analysis}
@@ -135,17 +144,17 @@ We wanted to use cloud platforms to train our model, but most of them needs paym
 
 
 \subsection{Comparison and Analysis of Performance}
-\begin{table} [H]
+\begin{table} [h]
   \caption{Performance of different models}
   \label{table 1}
   \centering
-  \begin{tabular}{llll}
+  \begin{tabular}{c|c}
     \toprule
-    Model     & 200 train MAP@10     & 100 validation MAP@10 & All datasets MAP@10 \\
+   	Model   	&  final GAP \\
     \midrule 
-DMRNets & 0  & 0   &0  \\
-LSTM & 0  & 0 & 0.759     \\
-biLSTM     & 0 & 0 & 0.763      \\
+	complex-CNN & 0 \\
+
+	CNN + LSTM` & 0  \\
     \bottomrule
   \end{tabular}
 \end{table}
