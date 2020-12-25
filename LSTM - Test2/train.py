@@ -25,21 +25,20 @@ class MyModel(tf.keras.Model):
 
     def call(self, inputs):
         x = self.conv1_layer(inputs)
-        x = tf.nn.leaky_relu(x)
         x = self.pool1_layer(x)
         x = self.conv2_layer(x)
         x = tf.keras.layers.BatchNormalization(1)(x)
-        x = tf.nn.leaky_relu(x)
         x = self.pool2_layer(x)
+        x = tf.keras.layers.BatchNormalization(1)(x)
+        x = tf.keras.layers.Dropout(0.2)(x)
         x = tf.layers.flatten(x)
         x = tf.expand_dims(x, dim=1)
-        x = tf.keras.layers.Dropout(0.2)(x)
+        # x = tf.keras.layers.Dropout(0.2)(x)
         print("INPUT pool1----------",x.shape)
         
-        lstmCell = tf.keras.layers.LSTM(512,activation='tanh')(x)
+        lstmCell = tf.keras.layers.LSTM(640,activation='tanh')(x)
         print("INPUT lstm----------",lstmCell.shape)
         x = tf.layers.flatten(lstmCell)
-        x = tf.keras.layers.Dropout(0.2)(x)
         x = tf.keras.layers.Dense(256,activation='tanh')(x)
         x = tf.keras.layers.BatchNormalization(1)(x)
         x = tf.nn.leaky_relu(x)
@@ -52,7 +51,7 @@ if __name__ == '__main__':
     # parameters
     LR = 0.001
     BatchSize = 64
-    EPOCH = 10
+    EPOCH = 20
 
     # data
     train_x, train_y = load_data('../train')

@@ -59,10 +59,6 @@ Shanghai Jiao Tong University\\
 This project is the group project of CS410 Artificial Intelligence 2020 Fall in Shanghai Jiao Tong University named Drug Molecular Toxicity Prediction. The main purpose is to use a neural network model taking chemical structure as input, to output the prediction of whether it is toxic. In this project I use one hot format of SMILE structure which is processed from original chemical structure. The one hot format of SMILES is a 2D {0,1} matrix, where each column represents a symbol in the SMILES notation of the current molecule, and each row is one ASCII character appeared in the dataset’s SMILES dictionary.
 % The authors develop two different neural network models, which are Deep Fully Connected Neural Networks with Merge-and-Run Mappings(DMRNets) and LSTM in their attempts to achieve this goal.
 
-\section{Evironment}
-In this project, TensorFlow-gpu 1.15.0 is used as deep learning library, Pandas is used to input data and Numpy is used through mathmatical calculation.
-
-The platform I train and test the model is on my own local machine, whose CPU is i5-8500, GPU is GTX 1060-16G, and RAM size is 24G.
 
 \section{Methods}
 \subsection{Input Data analysis}
@@ -74,39 +70,44 @@ Based on LeNet-5 which is given in the demo, I optimize that model by using batc
 convolutional neural network (CNNt) is a class of neural networks, most commonly applied to analyzing image. CNN has feature kernel that to determine whether each part of the image with the kernel size has the feature, if it is, it may return a higher value. When running the CNN, the input tensor with shape $number*height*width*input channel$ will be processed into $number*height*width*feature channel$ if user fill some blank and keep image size same.
 
 \subsubsection{LeNet-5}
-LeNet-5 is a simple but usefull CNN which is widely used in image processing. The original LeNet-5 consists of seven layers: 2 convolution layer, 2 pooling layer and 3 full connection layer. The input data will first processed by Layer 1 convolution, that has 5$\times$5 kernel. Through the convolution it will increase the data channel. The pooling is use to reduce its size, and outstand feature value in pooling kernel. When the size is small enough--in LeNet-5 run the function after 2 convolution and pooling-- model run the full connection and shrink node to label size by using 3 layers. The Figure 1 show the structure of LeNet-5.
+LeNet-5 is a simple but usefull CNN which is widely used in image processing. The original LeNet-5 consists of seven layers: 2 convolution layer, 2 pooling layer and 3 full connection layer. The input data will first processed by Layer 1 convolution, that has 5$\times$5 kernel. Through the convolution it will increase the data channel. The pooling is use to reduce its size, and outstand feature value in pooling kernel. When the size is small enough--in LeNet-5 run the function after 2 convolution and pooling-- model run the full connection and shrink node to label size by using 3 layers. The Figure \ref{LeNet} show the structure of LeNet-5.
 \begin{figure}[h]
   \centering
   \fbox{\includegraphics[width=14cm, height=4cm]{LeNet-5.png}}
   \caption{Structure of LeNet-5}
+  \label{LeNet}
 \end{figure} 
 
 \subsubsection{Complex CNN}
 I first think that whether I can build an improved model based on the demo, which is LeNet-5 inside. So I try to add some layers to test whether the GAP can increase.
 
-Though my effort I get a bit powerful model than vanilla LeNet-5, which is add batch normalization after each convolution and dense layer, so that the regularization can work on the processed data. After each pooling, I use dropout to make some noise in order to enhance the model. 
+Though my effort I get a bit powerful model than vanilla LeNet-5, which is add batch normalization after each convolution and dense layer, so that the regularization can work on the processed data. After each pooling, I use dropout to make some noise in order to enhance the model. The overview of Complex CNN structure is show in Figure \ref{Complex CNN}, which directly display which layer the model contains.
  
-
-\begin{figure}[h]
+\begin{figure}
 	\centering
 	\fbox{\includegraphics[width=14cm, height=11cm]{complex-cnn.png}}
 	\caption{Structure of complex-cnn}
+	\label{Complex CNN}
 \end{figure} 
 
-\subsubsection{Performance}
-Figure x shows the GAP graph of each iteration.
+
 
 
 \subsection{CNN + LSTM}
 \subsubsection{Model Overview}
-Long short-term memory(LSTM) is a type of recurrent neural network (RNN) architecture,which is one of the most useful RNN.  Before LSTM, let's first talk about RNN, the structure of a typical RNN is shown in Figure x. As brain can understand articles based on knowledge that people have learnt before, some parameters in RNN can be derived from forward node, this was what traditional neural networks could not achieve. Traditional RNN could not store what it learned from forward node for a dragged time period, since every cell of RNN will process both input and derived information in activation function, but LSTM solved this problem.
-
+Long short-term memory(LSTM) is a type of recurrent neural network (RNN) architecture,which is one of the most useful RNN.  Before LSTM, let's first talk about RNN, the structure of a typical RNN is shown in Figure \ref{RNN}. As brain can understand articles based on knowledge that people have learnt before, some parameters in RNN can be derived from forward node, this was what traditional neural networks could not achieve. Traditional RNN could not store what it learned from forward node for a dragged time period, since every cell of RNN will process both input and derived information in activation function, but LSTM solved this problem.
+\begin{figure}[h]
+  \centering
+  \fbox{\includegraphics[width=9cm, height=3cm]{RNN.png}}
+  \caption{Structure of RNN}
+  \label{RNN}
+\end{figure} 
 
 A common LSTM unit is composed of a cell and 3 gates. The cell stores values over time intervals as cell states, and the 3 gates’ main job is to regulate the flow of information into and out of the cell. Specifically, forget gate decides which information to forget, input gate decides to update which value of cell states and update cell states, and at last, the output gate output filtered cell states. To put it in an abstract high-level view, what LSTM do is using past context as reference to predict the output.Beside forward outputs, another data are derived from forward nodes in LSTM network. The increasing data will only interact with a few data that processed in cell, which means it will keep the knowledge that it learned for a long time.
 
 \begin{figure}[h]
   \centering
-  \fbox{\includegraphics[width=14cm, height=9cm]{lstm.png}}
+  \fbox{\includegraphics[width=9cm, height=5.6cm]{lstm.png}}
   \caption{Structure of LSTM Cell}
 \end{figure} 
 
@@ -121,86 +122,89 @@ Here are each step in the forget gate of LSTM cell:
 \end{itemize}
 
 \subsubsection{Contribute idea}
-The reason why I use CNN first is that the input size is too huge for my computer to caluculate directly. So CNN and pooling is necessary for reduce the size. When passing the CNN layer, the size of each piece of data is $18*50*32$. So I can run the processed input on LSTM, which can keep some forward information.
+The reason why I use CNN first is that the input size is too huge for my computer to caluculate directly. So CNN and pooling is necessary for reduce the size. When passing the CNN layer, the size of each piece of data is $18*50*32$. So I can run the processed input on LSTM, which can keep some forward information. The Figure \ref{LSTMstruct} shows the structure of the model.
 
 \begin{figure}[h]
 	\centering
-	\fbox{\includegraphics[width=6cm, height=14cm]{CNN+LSTM.png}}
+	\fbox{\includegraphics[width=14cm, height=8.5cm]{CNN+LSTM.png}}
 	\caption{Structure of CNN+LSTM}
+	\label{LSTMstruct}
 \end{figure} 
 
-\subsubsection{Performance}
-Figure x shows the GAP graph of each iteration.
-
-\subsection{Bidirectional Long short-term memory (biLSTM)}
+\subsection{CNN+BiLSTM}
 \subsubsection{Model Overview}
-biLSTM is a variant of LSTM, biLSTM train 2 instead of 1 LSTMs on 1 input sequence, the first on the input sequence, and the second on a reversed copy of the input sequence. In other words, it connects two hidden layers of opposite directions to the same output, this generally provide additional context to the network, thus results in better training results. And each LSTM in BiLSTM structure will produce a output which will provide the other one as future prediction. for more information please refer to the original article[4]. 
+Bidirectional Long short-term memory(BiLSTM) is a variant of LSTM, biLSTM train 2 instead of 1 LSTMs on 1 input sequence, the first on the input sequence, and the second on a reversed copy of the input sequence. In other words, it connects two hidden layers of opposite directions to the same output, this generally provide additional context to the network, thus results in better training results. And each LSTM in BiLSTM structure will produce a output which will provide the other one as future prediction. 
 
 \begin{figure}[h]
 	\centering
-	\fbox{\includegraphics[width=6cm, height=14cm]{CNN+LSTM.png}}
-	\caption{Structure of LSTM}
+	\fbox{\includegraphics[width=12cm, height=5cm]{BiLSTM.png}}
+	\caption{Structure of BiLSTM}
 \end{figure} 
 
-The model structure is shown in Figure x. Like the structure of CNN+LSTM, I change the LSTM layer into the Bidirectional LSTM layer.
-
-\begin{figure}[h]
-	\centering
-	\fbox{\includegraphics[width=6cm, height=14cm]{CNN+LSTM.png}}
-	\caption{Structure of CNN+BiLSTM}
-\end{figure} 
-
-\subsubsection{Performance}
-Figure x shows the GAP graph of each iteration.
-
-\newpage
+Like the structure of CNN+LSTM, I change the LSTM layer into the Bidirectional LSTM layer. 
 
 \section{Experiments and Analysis}
+\subsection{Environment}
+In this project, TensorFlow-gpu 1.15.0 is used as deep learning library, Pandas is used to input data and Numpy is used through mathmatical calculation.
+
+The platform I train and test the model is on my own local machine, whose CPU is i5-8500, GPU is GTX 1060-16G, and RAM size is 24G.
+
 \subsection{Training}
+Complex CNN has the most high AUC value among the model I use. The final AUC of weight I got is 0.826. The curve is displayed in Figure \ref{CNN}.
 
+\begin{figure}[h]
+	\centering
+	\fbox{\includegraphics[width=12cm, height=7cm]{complex-cnn-auc.png}}
+	\caption{AUC curve of Complex CNN}
+	\label{CNN}
+\end{figure} 
 
+The hightest AUC value of CNN+LSTM is 0.784. The curve is displayed in Figure \ref{CNN+LSTM}.
 
-\subsection{Comparison and Analysis of Performance}
+\begin{figure}[h]
+	\centering
+	\fbox{\includegraphics[width=12cm, height=7cm]{CNN+LSTM-auc.png}}
+	\caption{AUC curve of CNN+LSTM}
+	\label{CNN+LSTM}
+\end{figure} 
+
+The hightest AUC value of CNN+LSTM I got is 0.803. The curve is displayed in Figure \ref{CNN+BiLSTM}.
+\begin{figure}[h]
+	\centering
+	\fbox{\includegraphics[width=12cm, height=7cm]{CNN+BiLSTM-auc.png}}
+	\caption{AUC curve of CNN+BiLSTM}
+	\label{CNN+BiLSTM}
+\end{figure} 
+
+\section{Conclusion}
+The performances of 3 models are listed in Table \ref{table 1}. As shown in the table, the Complex CNN has the most powerful performance in these models. The AUC of Complex CNN can get 0.826 and its AUC test result in Kaggle is about 0.858, which shows in Figure \ref{final result}. 
 \begin{table} [h]
   \caption{Performance of different models}
   \label{table 1}
   \centering
-  \begin{tabular}{c|c}
+  \begin{tabular}{c|c|c}
     \toprule
-   	Model   	&  final GAP \\
+   	Model   	& \quad final AUC \quad &\quad test result \quad \\
     \midrule 
-	complex-CNN & 0 \\
-	CNN + LSTM  & 0  \\
-	CNN + BiLSTM& 0  \\
-	
-	
+	Complex-CNN & 0.826 & 0.858\\
+	CNN + LSTM  & 0.784 & 0.842\\
+	CNN + BiLSTM& 0.803 & 0.855\\
     \bottomrule
   \end{tabular}
 \end{table}
-The performances of 3 models are listed in Table \ref{table 1}, as we could see, the MAP@10 for the first 200 training shards and 100 validation shards are always higher than the MAP@10 for the whole datasets, the reason is obvious as we use the first 200 training shards and 100 validation shards as training datasets which leads to possible overfitting. However, we consider that the LSTM and biLSTM's performance of around 0.75 to 0.76 for the whole datasets as satisfactory, since we only use an extremely small subset to train them. We hypothesize that if we use larger datasets for training, the model would lead to more satisfactory results, too bad that we don't have the computing power to prove this hypothesis.
 
+\begin{figure}[h]
+	\centering
+	\fbox{\includegraphics[width=15cm, height=0.8cm]{complex-cnn-result.png}}
+	\caption{test result of project 1}
+	\label{final result}
+\end{figure} 
 
-
-\section{Conclusion}
 
 
 
 \section*{References}
+[1] Sepp Hochreiter. Long Short-Term Memory. 
 
-References follow the acknowledgments. Use unnumbered first-level heading for
-the references. Any choice of citation style is acceptable as long as you are
-consistent. It is permissible to reduce the font size to \verb+small+ (9 point)
-when listing the references.
-{\bf Note that the Reference section does not count towards the eight pages of content that are allowed.}
-\medskip
-
-\small
-
-[1] Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun. Deep Residual Learning for Image Recognition.
-
-[2] Liming Zhao, Mingjie Li, Depu Meng, Xi Li, Zhaoxiang Zhang. Deep Convolutional Neural Networks with Merge-and-Run Mappings.
-
-[3] Sepp Hochreiter. Long Short-Term Memory. 
-
-[4] Alex Graves, Jürgen Schmidhuber. Framewise phoneme classification with bidirectional LSTM and other neural network architectures. 
+[2] Alex Graves, Jürgen Schmidhuber. Framewise phoneme classification with bidirectional LSTM and other neural network architectures. 
 \end{document}
