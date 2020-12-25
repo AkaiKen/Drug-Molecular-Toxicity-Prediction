@@ -93,6 +93,9 @@ Though my effort I get a bit powerful model than vanilla LeNet-5, which is add b
 	\caption{Structure of complex-cnn}
 \end{figure} 
 
+\subsubsection{Performance}
+Figure x shows the GAP graph of each iteration.
+
 
 \subsection{CNN + LSTM}
 \subsubsection{Model Overview}
@@ -126,20 +129,34 @@ The reason why I use CNN first is that the input size is too huge for my compute
 	\caption{Structure of CNN+LSTM}
 \end{figure} 
 
+\subsubsection{Performance}
+Figure x shows the GAP graph of each iteration.
+
 \subsection{Bidirectional Long short-term memory (biLSTM)}
 \subsubsection{Model Overview}
-biLSTM is a variant of LSTM, biLSTM train 2 instead of 1 LSTMs on 1 input sequence, the first on the input sequence, and the second on a reversed copy of the input sequence. In other words, it connects two hidden layers of opposite directions to the same output, this generally provide additional context to the network, thus results in better training results. for more information please refer to the original article[4]. The model structure is shown in Figure 6.
+biLSTM is a variant of LSTM, biLSTM train 2 instead of 1 LSTMs on 1 input sequence, the first on the input sequence, and the second on a reversed copy of the input sequence. In other words, it connects two hidden layers of opposite directions to the same output, this generally provide additional context to the network, thus results in better training results. And each LSTM in BiLSTM structure will produce a output which will provide the other one as future prediction. for more information please refer to the original article[4]. 
 
+\begin{figure}[h]
+	\centering
+	\fbox{\includegraphics[width=6cm, height=14cm]{CNN+LSTM.png}}
+	\caption{Structure of LSTM}
+\end{figure} 
 
-In our project, we train two features in each biLSTM, then merge them together. Through full connection layer and leaky relu activation, the network will give final results. The model structure detail is in Figure (x).
+The model structure is shown in Figure x. Like the structure of CNN+LSTM, I change the LSTM layer into the Bidirectional LSTM layer.
 
-The model first extend mean\_RGB features to 1024. Processing the data by using batch normalization and reshape in order to run bidirectional LSTM. Then model use dropout to make some noise. The process of the other feature is as same as RGB feature. When two features have done biLSTM, model concatenate them and full connect them using leaky relu. 
+\begin{figure}[h]
+	\centering
+	\fbox{\includegraphics[width=6cm, height=14cm]{CNN+LSTM.png}}
+	\caption{Structure of CNN+BiLSTM}
+\end{figure} 
 
+\subsubsection{Performance}
+Figure x shows the GAP graph of each iteration.
 
+\newpage
 
 \section{Experiments and Analysis}
 \subsection{Training}
-We wanted to use cloud platforms to train our model, but most of them needs payment, and we don't have the fund for that, Google Cloud Platform offers 1 month free trial, but to get the free trial we need to register with credit card, which unfortunately we don't possess, at the end of the day we need to train the model using our local machines. Limited by the performance of our local machines, we could only use a small subset of the datasets for training, in this case, we use the first 200 training shards (train0000.tfrecord~train0199.tfrecord) and the first 100 validation shards (validate0000.tfrecord~validate0099.tfrecord) as our training datasets. Figure 6 and 7 shows the graph of training curve of the LSTM and biLSTM models. As shown in the figures, both models converged at around $0.75$, with biLSTM having a slightly better performance.
 
 
 
@@ -153,8 +170,10 @@ We wanted to use cloud platforms to train our model, but most of them needs paym
    	Model   	&  final GAP \\
     \midrule 
 	complex-CNN & 0 \\
-
-	CNN + LSTM` & 0  \\
+	CNN + LSTM  & 0  \\
+	CNN + BiLSTM& 0  \\
+	
+	
     \bottomrule
   \end{tabular}
 \end{table}
@@ -163,7 +182,7 @@ The performances of 3 models are listed in Table \ref{table 1}, as we could see,
 
 
 \section{Conclusion}
-Based on the experiments, we conclude that the xxx model has a superior performance over the other models we used.
+
 
 
 \section*{References}
