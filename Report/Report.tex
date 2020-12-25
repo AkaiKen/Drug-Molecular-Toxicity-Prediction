@@ -52,7 +52,7 @@ Shanghai Jiao Tong University\\
 \maketitle
 
 \begin{abstract}
- I develop some models to solve a problem whether a chemical is toxic or not. In this project I use residual net(ResNet), long short-term memory(LSTM) and a complex CNN based on LeNet-5. Through several experiment I found that the complex neural network is most accurate among these model.
+ I develop some models to solve a problem whether a chemical is toxic or not. In this project I use 2 long short-term memory(LSTM) and a complex CNN based on LeNet-5. Through several experiment I found that the complex neural network is most accurate among these model.
 \end{abstract}
 
 \section{Introduction}
@@ -79,7 +79,7 @@ LeNet-5 is a simple but usefull CNN which is widely used in image processing. Th
 \end{figure} 
 
 \subsubsection{Complex CNN}
-I first think that whether I can build an improved model based on the demo, which is LeNet-5 inside. So I try to add some layers to test whether the GAP can increase.
+I first think that whether I can build an improved model based on the demo, which is LeNet-5 inside. So I try to add some layers to test whether the AUC can increase.
 
 Though my effort I get a bit powerful model than vanilla LeNet-5, which is add batch normalization after each convolution and dense layer, so that the regularization can work on the processed data. After each pooling, I use dropout to make some noise in order to enhance the model. The overview of Complex CNN structure is show in Figure \ref{Complex CNN}, which directly display which layer the model contains.
  
@@ -95,13 +95,8 @@ Though my effort I get a bit powerful model than vanilla LeNet-5, which is add b
 
 \subsection{CNN + LSTM}
 \subsubsection{Model Overview}
-Long short-term memory(LSTM) is a type of recurrent neural network (RNN) architecture,which is one of the most useful RNN.  Before LSTM, let's first talk about RNN, the structure of a typical RNN is shown in Figure \ref{RNN}. As brain can understand articles based on knowledge that people have learnt before, some parameters in RNN can be derived from forward node, this was what traditional neural networks could not achieve. Traditional RNN could not store what it learned from forward node for a dragged time period, since every cell of RNN will process both input and derived information in activation function, but LSTM solved this problem.
-\begin{figure}[h]
-  \centering
-  \fbox{\includegraphics[width=9cm, height=3cm]{RNN.png}}
-  \caption{Structure of RNN}
-  \label{RNN}
-\end{figure} 
+Long short-term memory(LSTM) is a type of recurrent neural network (RNN) architecture,which is one of the most useful RNN.  Before LSTM, let's first talk about RNN. As brain can understand articles based on knowledge that people have learnt before, some parameters in RNN can be derived from forward node, this was what traditional neural networks could not achieve. Traditional RNN could not store what it learned from forward node for a dragged time period, since every cell of RNN will process both input and derived information in activation function, but LSTM solved this problem.
+
 
 A common LSTM unit is composed of a cell and 3 gates. The cell stores values over time intervals as cell states, and the 3 gates’ main job is to regulate the flow of information into and out of the cell. Specifically, forget gate decides which information to forget, input gate decides to update which value of cell states and update cell states, and at last, the output gate output filtered cell states. To put it in an abstract high-level view, what LSTM do is using past context as reference to predict the output.Beside forward outputs, another data are derived from forward nodes in LSTM network. The increasing data will only interact with a few data that processed in cell, which means it will keep the knowledge that it learned for a long time.
 
@@ -133,7 +128,7 @@ The reason why I use CNN first is that the input size is too huge for my compute
 
 \subsection{CNN+BiLSTM}
 \subsubsection{Model Overview}
-Bidirectional Long short-term memory(BiLSTM) is a variant of LSTM, biLSTM train 2 instead of 1 LSTMs on 1 input sequence, the first on the input sequence, and the second on a reversed copy of the input sequence. In other words, it connects two hidden layers of opposite directions to the same output, this generally provide additional context to the network, thus results in better training results. And each LSTM in BiLSTM structure will produce a output which will provide the other one as future prediction. 
+Bidirectional Long short-term memory(BiLSTM) is a variant of LSTM, biLSTM train 2 instead of 1 LSTMs on input sequence, the first on the input sequence, and the second on a reversed copy of the input sequence. In other words, it connects two hidden layers of opposite directions to the same output, this generally provide additional context to the network, thus results in better training results. And each LSTM in BiLSTM structure will produce a output which will provide the other one as future prediction. 
 
 \begin{figure}[h]
 	\centering
